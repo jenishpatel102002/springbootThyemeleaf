@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>$Title$</title>
+</head>
+<body>
+<form method="post" th:object="${saveChemicalname}">
+  <label for="inputText">Enter some text:</label>
+  <input type="text" id="inputText" name="inputText" th:field="*{chemicalname}"/>
+  <button type="submit">Submit</button>
+</form>
+</body>
+</html>

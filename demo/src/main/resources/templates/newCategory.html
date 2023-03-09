@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+</head>
+<body>
+<form th:method="post" th:object="${newcat}">
+  <label for="category">Choose an option:</label>
+  <select id="category" name="options" th:field="*{category}">
+    <option th:text="select value"></option>
+    <option th:each="option : ${chName}" th:text="${option}" th:value="${option}"></option>
+  </select>
+  <br/>
+  chenmical name:-
+  <input type="text" id="chname" name="chemicalname" th:field="*{chemicalname}"/>
+  <br/>
+  uom
+  <input type="text" id="uom" name="uom" th:field="*{uom}"/>
+  <br>
+  casno:-
+  <input type="text" id="casno" name="casno" th:field="*{casno}"/>
+  <br/>location:-
+  <input type="text" id="location" name="location" th:field="*{location}"/>
+  <br>minum Stock:-
+  <input type="text" id="stock" name="minimumstock" th:field="*{minimumstock}"/>
+  <button type="submit">Submit</button>
+</form>
+</body>
+</html>

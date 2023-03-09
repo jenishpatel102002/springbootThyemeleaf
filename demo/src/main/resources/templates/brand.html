@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>$Title$</title>
+</head>
+<body>
+<form th:method="post" th:object="${brandTable}">
+  <label for="options">Choose an option:</label>
+  <select id="options" name="options" th:field="*{category}">
+    <option th:each="option : ${chName}" th:text="${option}" th:value="${option}"></option>
+  </select>
+  <input type="text" id="inputText" name="inputText" th:field="*{brand}"/>
+  <button type="submit">Submit</button>
+</form>
+</body>
+</html>
