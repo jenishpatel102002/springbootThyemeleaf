@@ -1,6 +1,7 @@
 package com.example.demo.DataClass;
 
 
+import com.example.demo.RepoClass.inflowJpaRepo;
 import com.example.demo.RepoClass.necatJpaRepo;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,10 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.print.attribute.standard.Media;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 
 @Controller
@@ -30,6 +34,9 @@ public class controller {
 
     @Autowired
     necatJpaRepo  newcatJpaRepo;
+
+    @Autowired
+    inflowJpaRepo inflowJpaRepo;
 
     @GetMapping(value = "/hello")
     public  ModelAndView Pu( ModelAndView md){
@@ -95,6 +102,7 @@ public class controller {
     @GetMapping(value = "/inflow")
     public ModelAndView inflow(){
         ModelAndView md=new ModelAndView();
+        md.addObject("inflowdata",new inflowTable());
         List<String> chName=chemicalJpaRepo.findChemicalname();
         md.addObject("chName",chName);
         md.setViewName("inflow");
@@ -103,12 +111,38 @@ public class controller {
 
     @PostMapping(value = "/loadAvalibledata/{selectcategrory}")
     @ResponseBody
-    public List<String> loaddata(@PathVariable("selectcategrory") String cat){
+    public Map<String,Object> loaddata(@PathVariable("selectcategrory") String cat){
 
+        Map<String,Object> data=new HashMap<>();
         httpSession.removeAttribute("inflowchemical");
         List<String> chname=newcatJpaRepo.findchemical(cat);
+        chname.add(0,"Select String");
         httpSession.setAttribute("inflowchemical",chname);
+        data.put("inflowchemical",chname);
+        List<String> brandList=brandJpaRepo.brandList(cat);
+        data.put("brandList",brandList);
+        return data;
+    }
+
+    @PostMapping(value = "/loadAvadata/{selectcategrory}/{chname}")
+    @ResponseBody
+    public Map<String, String> loaddata2(@PathVariable("selectcategrory") String cat, @PathVariable("chname") String chamicalname){
+        Map<String,String> chname=new HashMap<>();
+        System.out.println(cat);
+        System.out.println(chamicalname);
+        newCategory newcat= newcatJpaRepo.findData(cat,chamicalname);
+        chname.put("casno",newcat.getCasno());
+        chname.put("uom",newcat.getUom());
+        chname.put("location",newcat.getLocation());
         return chname;
+    }
+
+    @PostMapping(value = "/inflow")
+    public String pub(@ModelAttribute("inflowdata") inflowTable info){
+        System.out.println(info.getCasno());
+        System.out.println("done");
+        inflowJpaRepo.save(info);
+        return "redirect:/api/inflow";
     }
 
     public String TodayDate(){
