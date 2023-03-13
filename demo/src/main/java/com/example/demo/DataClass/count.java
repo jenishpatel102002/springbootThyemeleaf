@@ -10,13 +10,13 @@ public class count {
     @Id
     public int id;
     public String type;
-    public String total;
+    public int total;
     public String year;
 
     public count() {
     }
 
-    public count(int id, String type, String total, String year) {
+    public count(int id, String type, int total, String year) {
         this.id = id;
         this.type = type;
         this.total = total;
@@ -39,11 +39,11 @@ public class count {
         this.type = type;
     }
 
-    public String getTotal() {
+    public int getTotal() {
         return total;
     }
 
-    public void setTotal(String total) {
+    public void setTotal(int total) {
         this.total = total;
     }
 

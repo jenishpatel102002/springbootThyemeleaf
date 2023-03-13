@@ -29,25 +29,33 @@ public class inflowTable {
 
     private String flag;
 
+    private String fillby;
+    private String approveby;
+
+    private String inflowid;
+
     public inflowTable() {
     }
 
-    public inflowTable(int id, String category, String namech, String casno, String packSize, String uom, String brand, String prsno, String prsdate, int packno, String mbno, String dateofexpiry, String location, String remarks, String flag) {
+    public inflowTable(int id, String brand, String casno, String category, String dateofexpiry, String namech, String packsize, String uom, String prsno, String prsdate, int packno, String mbno, String location, String remarks, String flag, String fillby, String approveby, String inflowid) {
         this.id = id;
-        this.category = category;
-        this.namech = namech;
-        this.casno = casno;
-        this.packSize = packSize;
-        this.uom = uom;
         this.brand = brand;
+        this.casno = casno;
+        this.category = category;
+        this.dateofexpiry = dateofexpiry;
+        this.namech = namech;
+        this.packsize = packsize;
+        this.uom = uom;
         this.prsno = prsno;
         this.prsdate = prsdate;
         this.packno = packno;
         this.mbno = mbno;
-        this.dateofexpiry = dateofexpiry;
         this.location = location;
         this.remarks = remarks;
         this.flag = flag;
+        this.fillby = fillby;
+        this.approveby = approveby;
+        this.inflowid = inflowid;
     }
 
     public int getId() {
@@ -58,20 +66,12 @@ public class inflowTable {
         this.id = id;
     }
 
-    public String getCategory() {
-        return category;
+    public String getBrand() {
+        return brand;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public String getNamech() {
-        return namech;
-    }
-
-    public void setNamech(String namech) {
-        this.namech = namech;
+    public void setBrand(String brand) {
+        this.brand = brand;
     }
 
     public String getCasno() {
@@ -82,12 +82,36 @@ public class inflowTable {
         this.casno = casno;
     }
 
-    public String getPackSize() {
-        return packSize;
+    public String getCategory() {
+        return category;
     }
 
-    public void setPackSize(String packSize) {
-        this.packSize = packSize;
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getDateofexpiry() {
+        return dateofexpiry;
+    }
+
+    public void setDateofexpiry(String dateofexpiry) {
+        this.dateofexpiry = dateofexpiry;
+    }
+
+    public String getNamech() {
+        return namech;
+    }
+
+    public void setNamech(String namech) {
+        this.namech = namech;
+    }
+
+    public String getPacksize() {
+        return packsize;
+    }
+
+    public void setPacksize(String packsize) {
+        this.packsize = packsize;
     }
 
     public String getUom() {
@@ -96,14 +120,6 @@ public class inflowTable {
 
     public void setUom(String uom) {
         this.uom = uom;
-    }
-
-    public String getBrand() {
-        return brand;
-    }
-
-    public void setBrand(String brand) {
-        this.brand = brand;
     }
 
     public String getPrsno() {
@@ -138,14 +154,6 @@ public class inflowTable {
         this.mbno = mbno;
     }
 
-    public String getDateofexpiry() {
-        return dateofexpiry;
-    }
-
-    public void setDateofexpiry(String dateofexpiry) {
-        this.dateofexpiry = dateofexpiry;
-    }
-
     public String getLocation() {
         return location;
     }
@@ -168,5 +176,29 @@ public class inflowTable {
 
     public void setFlag(String flag) {
         this.flag = flag;
+    }
+
+    public String getFillby() {
+        return fillby;
+    }
+
+    public void setFillby(String fillby) {
+        this.fillby = fillby;
+    }
+
+    public String getApproveby() {
+        return approveby;
+    }
+
+    public void setApproveby(String approveby) {
+        this.approveby = approveby;
+    }
+
+    public String getInflowid() {
+        return inflowid;
+    }
+
+    public void setInflowid(String inflowid) {
+        this.inflowid = inflowid;
     }
 }

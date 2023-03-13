@@ -2,6 +2,7 @@ package com.example.demo.DataClass;
 
 
 import com.example.demo.RepoClass.inflowJpaRepo;
+import com.example.demo.RepoClass.countJpaRepo;
 import com.example.demo.RepoClass.necatJpaRepo;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,10 @@ public class controller {
 
     @Autowired
     inflowJpaRepo inflowJpaRepo;
+
+    @Autowired
+    countJpaRepo countJpaRepo;
+
 
     @GetMapping(value = "/hello")
     public  ModelAndView Pu( ModelAndView md){
@@ -140,15 +145,45 @@ public class controller {
     @PostMapping(value = "/inflow")
     public String pub(@ModelAttribute("inflowdata") inflowTable info){
         System.out.println(info.getCasno());
+        info.setFlag("pending");
+        info.setFillby((String) httpSession.getAttribute("techname"));
+
+        info.setInflowid("In"+newInFlowId());
         System.out.println("done");
         inflowJpaRepo.save(info);
         return "redirect:/api/inflow";
     }
 
+    private String newInFlowId() {
+        int year= LocalDate.now().getYear();
+        if(true)
+        {
+            countJpaRepo.lockTable();
+            count count= countJpaRepo.returnCount(String.valueOf(year),"inflow");
+            if(count!=null){
+                String Cou=String.valueOf(count.getTotal());
+                countJpaRepo.updateCount(String.valueOf(year),"inflow");
+                countJpaRepo.unlockTable();
+                return "-"+String.valueOf(year).substring(2)+"-"+Cou;
+            }
+            else{
+                count c=new count();
+                c.setType("inflow");
+                c.setYear(String.valueOf(year));
+                c.setTotal(1);
+                countJpaRepo.save(c);
+                return "-"+String.valueOf(year).substring(2)+"-1";
+            }
+        }
+        else {
+            System.out.println("locking not possible");
+            return null;
+        }
+    }
+
     public String TodayDate(){
         LocalDate dt= LocalDate.now();
         DateTimeFormatter formatters = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        System.out.printf(dt.format(formatters).toString());
         return  dt.format(formatters).toString();
     }
 }
