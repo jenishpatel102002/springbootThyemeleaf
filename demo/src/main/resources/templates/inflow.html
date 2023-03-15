@@ -28,37 +28,37 @@
     <option >select value</option>
     <option th:each="option : ${chName}" th:text="${option}" th:value="${option}"></option>
   </select>
-  <select id="chemicalname" name="namech" class="form-control select2-container" th:value="*{namech}">
+  <select id="chemicalname" name="chemicalname" class="form-control select2-container" th:value="*{namech}">
     <option>select value</option>
   </select>
   <input type="text" id="casno" name="casno"th:value="*{casno}"/>
   <input type="text" id="packsz" name="packsize" th:value="*{packsize}"/>
-  <input type="text" id="uom" name="uom" th:value="*{uom}"/>
+  <input type="text" id="uom" th:value="*{uom}"/>
   <select id="brand" name="brand" class="form-control select2-container" th:value="*{brand}">
     <option>select value</option>
   </select>
-  <input type="text" id="prcno" name="prsno" th:value="*{prsno}"/>
+  <input type="text" id="prcno" th:value="*{prsno}"/>
   <div class="input-group date" id="datepicker" >
-    <input type="text" class="form-control" id="date" name="prsdate" th:value="*{prsdate}"/>
+    <input type="text" class="form-control" id="date" th:value="*{prsdate}"/>
     <span class="input-group-append">
 			<span class="input-group-text bg-light d-block">
 				<i class="fa fa-calendar"></i>
 			</span>
 			</span>
   </div>
-  <input type="text" id="nopack" name="packno" th:value="*{packno}"/>
-    <input type="text"  id="mbno" name="mbno" th:value="*{mbno}"/>
+  <input type="text" id="nopack" th:value="*{packno}"/>
+    <input type="text"  id="mbno" th:value="*{mbno}"/>
 
   <div class="input-group date" id="dateexpiry">
-    <input type="text" class="form-control" id="date2" name="dateofexpiry" th:value="*{dateofexpiry}"/>
+    <input type="text" class="form-control" id="date2" th:value="*{dateofexpiry}"/>
     <span class="input-group-append">
 			<span class="input-group-text bg-light d-block">
 				<i class="fa fa-calendar"></i>
 			</span>
 			</span>
   </div>
-  <input type="text" id="location" name="location" th:value="*{location}"/>
-  <input type="text" id="remark" name="remarks" th:value="*{remarks}"/>
+  <input type="text" id="location" th:value="*{location}"/>
+  <input type="text" id="remark" th:value="*{remarks}"/>
 
     <button type="submit" id="sub">submit</button>
 </form>

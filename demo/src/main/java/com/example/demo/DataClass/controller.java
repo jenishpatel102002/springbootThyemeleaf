@@ -15,10 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.print.attribute.standard.Media;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 
 @Controller
@@ -82,6 +79,7 @@ public class controller {
         bd.setDate(dt.format(formatters).toString());
         System.out.println(bd.getDate().substring(6,10));
 
+        brandJpaRepo.save(bd);
         return "redirect:/api/brand";
     }
 
@@ -148,38 +146,61 @@ public class controller {
         info.setFlag("pending");
         info.setFillby((String) httpSession.getAttribute("techname"));
 
-        info.setInflowid("In"+newInFlowId());
+        //info.setInflowid("In"+newInFlowId());
         System.out.println("done");
         inflowJpaRepo.save(info);
         return "redirect:/api/inflow";
     }
 
-    private String newInFlowId() {
-        int year= LocalDate.now().getYear();
-        if(true)
-        {
-            countJpaRepo.lockTable();
-            count count= countJpaRepo.returnCount(String.valueOf(year),"inflow");
-            if(count!=null){
-                String Cou=String.valueOf(count.getTotal());
-                countJpaRepo.updateCount(String.valueOf(year),"inflow");
-                countJpaRepo.unlockTable();
-                return "-"+String.valueOf(year).substring(2)+"-"+Cou;
-            }
-            else{
-                count c=new count();
-                c.setType("inflow");
-                c.setYear(String.valueOf(year));
-                c.setTotal(1);
-                countJpaRepo.save(c);
-                return "-"+String.valueOf(year).substring(2)+"-1";
-            }
-        }
-        else {
-            System.out.println("locking not possible");
-            return null;
-        }
+    @GetMapping(value = "/inflowdata")
+    public ModelAndView testData(){
+        ModelAndView md= new ModelAndView("outflowdate");
+        md.addObject("bran",brandJpaRepo.findAll());
+        return md;
     }
+
+    @PostMapping("/fetch-data")
+    @ResponseBody
+    public List<brandTable> fetchSelectedData(@RequestParam("ids") List<Integer> ids) {
+        List<brandTable> selectedEmployees = brandJpaRepo.findAllById(ids);
+        System.out.println(selectedEmployees.get(0).getId());
+        return selectedEmployees;
+    }
+
+    // remove duplicates from list
+
+//    Set<Customer> depdupeCustomers = new LinkedHashSet<>(customers);
+//customers.clear();
+//customers.addAll(dedupeCustomers);
+
+//    private String newInFlowId() {
+//        int year= LocalDate.now().getYear();
+//        if(true)
+//        {
+//            countJpaRepo.lockTable();
+//            count count= countJpaRepo.returnCount(String.valueOf(year),"inflow");
+//            if(count!=null){
+//                String Cou=String.valueOf(count.getTotal());
+//                countJpaRepo.updateCount(String.valueOf(year),"inflow");
+//                countJpaRepo.unlockTable();
+//                return "-"+String.valueOf(year).substring(2)+"-"+Cou;
+//            }
+//            else{
+//                count c=new count();
+//                c.setType("inflow");
+//                c.setYear(String.valueOf(year));
+//                c.setTotal(1);
+//                countJpaRepo.save(c);
+//                return "-"+String.valueOf(year).substring(2)+"-1";
+//            }
+//        }
+//        else {
+//            System.out.println("locking not possible");
+//            return null;
+//        }
+//    }
+
+
 
     public String TodayDate(){
         LocalDate dt= LocalDate.now();

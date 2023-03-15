@@ -1,0 +1,85 @@
+Sure, here's an updated version of the code that resets the count to zero when the year changes, and saves the old and new counts in the database:
+
+MyTable.java:
+
+java
+Copy code
+@Entity
+@Table(name = "my_table")
+public class MyTable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "year")
+    private Integer year;
+
+    @Column(name = "count")
+    private Integer count;
+
+    // getters and setters
+}
+MyTableRepository.java:
+
+java
+Copy code
+@Repository
+public interface MyTableRepository extends JpaRepository<MyTable, Long> {
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    MyTable findByYear(Integer year);
+
+}
+MyService.java:
+
+java
+Copy code
+@Service
+public class MyService {
+
+    @Autowired
+    private MyTableRepository myTableRepository;
+
+    @Transactional
+    public Integer readAndUpdateCount() {
+        Integer currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        MyTable myTable = myTableRepository.findByYear(currentYear);
+        if (myTable == null) {
+            myTable = new MyTable();
+            myTable.setYear(currentYear);
+            myTable.setCount(0);
+        }
+        Integer oldCount = myTable.getCount();
+        if (myTable.getYear() != currentYear) {
+            myTable.setYear(currentYear);
+            myTable.setCount(0);
+        } else {
+            myTable.setCount(oldCount + 1);
+        }
+        myTableRepository.save(myTable);
+        return oldCount;
+    }
+
+}
+MyController.java:
+
+java
+Copy code
+@RestController
+@RequestMapping("/api")
+public class MyController {
+
+    @Autowired
+    private MyService myService;
+
+    @GetMapping("/count")
+    public ResponseEntity<Integer> readAndUpdateCount() {
+        Integer count = myService.readAndUpdateCount();
+        return ResponseEntity.ok(count);
+    }
+
+}
+In this updated example, the MyTable entity represents a table with columns for the year and the count. The MyTableRepository interface defines a method named findByYear that uses the @Lock annotation to acquire a pessimistic write lock on the table while finding the record for the current year. The MyService class defines a method named readAndUpdateCount that uses the @Transactional annotation to ensure that the read and update operations are performed atomically within a transaction. The method finds the MyTable record for the current year, reads its count value, increments the count value if the year hasn't changed, resets the count value to zero if the year has changed, and then saves the updated record to the database. The MyController class defines an HTTP endpoint that calls the readAndUpdateCount method and returns the old count value as a response.
+
+Note that this updated example assumes that you have already set up your database connection and JPA properties in your application.properties or application.yml file, and that you have tested this code thoroughly in your own environment to ensure that it meets your performance and concurrency requirements.
