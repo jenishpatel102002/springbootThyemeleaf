@@ -34,7 +34,6 @@ public class newCategory {
     public int getId() {
         return id;
     }
-
     public void setId(int id) {
         this.id = id;
     }
@@ -54,39 +53,30 @@ public class newCategory {
     public void setChemicalname(String chemicalname) {
         this.chemicalname = chemicalname;
     }
-
     public String getUom() {
         return uom;
     }
-
     public void setUom(String uom) {
         this.uom = uom;
     }
-
     public String getCasno() {
         return casno;
     }
-
     public void setCasno(String casno) {
         this.casno = casno;
     }
-
     public String getLocation() {
         return location;
     }
-
     public void setLocation(String location) {
         this.location = location;
     }
-
     public int getMinimumstock() {
         return minimumstock;
     }
-
     public void setMinimumstock(int minimumstock) {
         this.minimumstock = minimumstock;
     }
-
     public String getDate() {
         return date;
     }

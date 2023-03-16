@@ -83,3 +83,172 @@ public class MyController {
 In this updated example, the MyTable entity represents a table with columns for the year and the count. The MyTableRepository interface defines a method named findByYear that uses the @Lock annotation to acquire a pessimistic write lock on the table while finding the record for the current year. The MyService class defines a method named readAndUpdateCount that uses the @Transactional annotation to ensure that the read and update operations are performed atomically within a transaction. The method finds the MyTable record for the current year, reads its count value, increments the count value if the year hasn't changed, resets the count value to zero if the year has changed, and then saves the updated record to the database. The MyController class defines an HTTP endpoint that calls the readAndUpdateCount method and returns the old count value as a response.
 
 Note that this updated example assumes that you have already set up your database connection and JPA properties in your application.properties or application.yml file, and that you have tested this code thoroughly in your own environment to ensure that it meets your performance and concurrency requirements.
+
+
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+   <meta charset="UTF-8">
+   <title>Employee List</title>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+   <form method="post" action="/employees">
+      <table>
+         <thead>
+            <tr>
+               <th></th>
+               <th>ID</th>
+               <th>Name</th>
+               <th>Department</th>
+            </tr>
+         </thead>
+         <tbody>
+            <tr th:each="employee : ${employees}">
+               <td><input type="checkbox" class="checkbox" th:id="'checkbox' + ${employee.id}" /></td>
+               <td th:text="${employee.id}"></td>
+               <td th:text="${employee.name}"></td>
+               <td th:text="${employee.department}"></td>
+            </tr>
+         </tbody>
+      </table>
+      <button type="submit" id="saveButton" disabled>Save</button>
+   </form>
+   <script>
+      $(function() {
+         $('.checkbox').change(function() {
+            var checkedRows = $('.checkbox:checked').map(function() {
+               var id = $(this).attr('id').replace('checkbox', '');
+               var name = $(this).closest('tr').find('td:nth-child(3)').text();
+               var department = $(this).closest('tr').find('td:nth-child(4)').text();
+               return {
+                  id: id,
+                  name: name,
+                  department: department
+               };
+            }).get();
+            $('#saveButton').prop('disabled', checkedRows.length === 0);
+            console.log(checkedRows);
+         });
+      });
+   </script>
+</body>
+</html>
+
+
+
+@Controller
+public class EmployeeController {
+   @Autowired
+   private EmployeeService employeeService;
+
+   @GetMapping("/employees")
+   public String listEmployees(Model model) {
+      List<Employee> employees = employeeService.getEmployees();
+      model.addAttribute("employees", employees);
+      return "employeeList";
+   }
+
+   @PostMapping("/employees")
+   public String saveEmployees(@RequestParam("employeeIds") List<Long> employeeIds) {
+      // do something with the selected employee IDs
+      return "redirect:/employees";
+   }
+}
+
+
+
+//2nd approch
+
+To select a row using a checkbox and fetch all the data associated with that row in a Spring Boot application using Thymeleaf, you can follow these steps:
+
+Define an entity class that represents the table you want to fetch data from. For example, if you have a table named "Employee" with columns "id", "name", and "email", you can define an entity class as follows:
+java
+Copy code
+@Entity
+@Table(name = "Employee")
+public class Employee {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+
+    private String email;
+
+    // getters and setters
+}
+Define a Spring Data JPA repository that provides a method to fetch a single employee by id. For example:
+java
+Copy code
+@Repository
+public interface EmployeeRepository extends JpaRepository<Employee, Long> {
+
+    Employee findById(Long id);
+}
+Define a controller that handles the GET request to display the table data with checkboxes. For example:
+java
+Copy code
+@Controller
+public class EmployeeController {
+
+    @Autowired
+    private EmployeeRepository employeeRepository;
+
+    @GetMapping("/employee")
+    public String getAllEmployees(Model model) {
+        List<Employee> employees = employeeRepository.findAll();
+        model.addAttribute("employees", employees);
+        return "employee-list";
+    }
+}
+Define a Thymeleaf template that displays the employee data with checkboxes. For example:
+html
+Copy code
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Employee List</title>
+</head>
+<body>
+    <h1>Employee List</h1>
+    <form action="#" th:object="${selectedEmployees}">
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Select</th>
+            </tr>
+            <tr th:each="employee : ${employees}">
+                <td th:text="${employee.id}"></td>
+                <td th:text="${employee.name}"></td>
+                <td th:text="${employee.email}"></td>
+                <td><input type="checkbox" th:field="*{#lists.contains(selectedEmployees, employee)}" /></td>
+            </tr>
+        </table>
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
+In this example, the controller method getAllEmployees fetches all the employee records from the EmployeeRepository and passes them to the Thymeleaf view template via the model attribute "employees". The template uses a Thymeleaf form to submit the selected employees to the server. The th:each loop is used to iterate through the list of employees and display their data in the table rows. The checkbox input field uses the th:field attribute to bind the selection state of each employee to a selectedEmployees list object.
+
+Define a controller method that handles the form submission and fetches the selected employees. For example:
+java
+Copy code
+@Controller
+public class EmployeeController {
+
+    @Autowired
+    private EmployeeRepository employeeRepository;
+
+    @PostMapping("/employee")
+    public String getSelectedEmployees(@ModelAttribute("selectedEmployees") List<Employee> selectedEmployees, Model model) {
+        List<Employee> employees = employeeRepository.findAllById(selectedEmployees.stream().map(Employee::getId).collect(Collectors.toList()));
+        model.addAttribute("selectedEmployees", employees);
+        return "selected-employees";
+    }
+}
+In this example, the @PostMapping annotated getSelectedEmployees method takes a List<Employee> parameter annotated with @ModelAttribute that binds to the selectedEmployees list object defined in the Thymele
