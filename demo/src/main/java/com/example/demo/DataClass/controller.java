@@ -16,6 +16,9 @@ import javax.print.attribute.standard.Media;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
+
+
 
 
 @Controller
@@ -154,8 +157,12 @@ public class controller {
 
     @GetMapping(value = "/inflowdata")
     public ModelAndView testData(){
-        ModelAndView md= new ModelAndView("outflowdate");
-        md.addObject("bran",brandJpaRepo.findAll());
+        ModelAndView md= new ModelAndView("outflowother");
+        List<brandTable> br=brandJpaRepo.findAll();
+        List<checakedbrand> ch= br.stream().map(brand -> new checakedbrand(brand.getId(), brand.getCategory(),brand.getBrand(),brand.getDate(),false)).collect(Collectors.toList());
+        Item item = new Item();
+        item.setPersons(ch);
+        md.addObject("item",item);
         return md;
     }
 
@@ -166,6 +173,27 @@ public class controller {
         System.out.println(selectedEmployees.get(0).getId());
         return selectedEmployees;
     }
+
+    @PostMapping("/savedata")
+    @ResponseBody
+    public String submitForm(@ModelAttribute Item item) {
+        System.out.println(item.getPersons().stream().);
+        List<checakedbrand> checkedItems = item.getPersons().stream().filter(checakedbrand::isIscheacked).collect(Collectors.toList());
+        // do something with the checked items
+
+        System.out.println(checkedItems.stream().count());
+        return checkedItems.get(0).getBrand();
+    }
+
+
+
+
+//    @PostMapping("/savedata")
+//    public String saveData(@ModelAttribute Item item) {
+//        // process form data
+//        return "result";
+//    }
+
 
     // remove duplicates from list
 
