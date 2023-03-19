@@ -37,6 +37,10 @@
       <td th:text="${person.brand}"></td>
       <td th:text="${person.category}"></td>
       <td th:text="${person.date}"></td>
+      <input type="hidden"  th:field="*{persons[__${personStat.index}__].id}" /></td>
+      <input type="hidden"  th:field="*{persons[__${personStat.index}__].brand}" /></td>
+      <input type="hidden"  th:field="*{persons[__${personStat.index}__].category}" /></td>
+      <input type="hidden"  th:field="*{persons[__${personStat.index}__].date}" /></td>
     </tr>
     </tbody>
   </table>

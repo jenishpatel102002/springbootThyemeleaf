@@ -1,10 +1,12 @@
 package com.example.demo.DataClass;
 
 
+import com.example.demo.RepoClass.cheackeditemsJpaRepo;
 import com.example.demo.RepoClass.inflowJpaRepo;
 import com.example.demo.RepoClass.countJpaRepo;
 import com.example.demo.RepoClass.necatJpaRepo;
 import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.MediaType;
@@ -41,6 +43,9 @@ public class controller {
 
     @Autowired
     countJpaRepo countJpaRepo;
+
+    @Autowired
+    cheackeditemsJpaRepo cheackediteamsJpaRepo;
 
 
     @GetMapping(value = "/hello")
@@ -176,16 +181,46 @@ public class controller {
 
     @PostMapping("/savedata")
     @ResponseBody
-    public String submitForm(@ModelAttribute Item item) {
-        System.out.println(item.getPersons().stream().);
+    public String submitForm(@ModelAttribute("item") Item item) {
+        System.out.println(item.getPersons().stream().count());
         List<checakedbrand> checkedItems = item.getPersons().stream().filter(checakedbrand::isIscheacked).collect(Collectors.toList());
-        // do something with the checked items
-
         System.out.println(checkedItems.stream().count());
+
+        String newidGen=newIdGenrate();
+
+        for (checakedbrand cb:
+             checkedItems) {
+            
+            cheackediteams ci= new cheackediteams(
+                     cb.getBrand(), cb.getCategory(), cb.getDate(),"pending",newidGen
+            );
+            cheackediteamsJpaRepo.save(ci);
+        }
+
         return checkedItems.get(0).getBrand();
     }
 
-
+    @Transactional
+    private String newIdGenrate() {
+        String currentYear = TodayDate().substring(6,10);
+        System.out.println(currentYear);
+        count myTable = countJpaRepo.findByYear(currentYear);
+        if (myTable == null) {
+            myTable = new count();
+            myTable.setYear(currentYear);
+            myTable.setTotal(0);
+        }
+        Integer oldCount = myTable.getTotal()+1;
+        if (!myTable.getYear().equalsIgnoreCase(currentYear)) {
+            myTable.setYear(currentYear);
+            myTable.setTotal(1);
+        } else {
+            myTable.setTotal(myTable.getTotal()+1);
+            System.out.println(myTable.getYear()+"-"+myTable.getTotal());
+        }
+        countJpaRepo.save(myTable);
+        return "OF-"+currentYear.substring(2,4)+"-"+String.valueOf(oldCount);
+    }
 
 
 //    @PostMapping("/savedata")

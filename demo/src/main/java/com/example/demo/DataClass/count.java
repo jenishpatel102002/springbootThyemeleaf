@@ -9,7 +9,7 @@ import jakarta.persistence.Table;
 public class count {
     @Id
     public int id;
-    public String type;
+
     public int total;
     public String year;
 
@@ -18,7 +18,6 @@ public class count {
 
     public count(int id, String type, int total, String year) {
         this.id = id;
-        this.type = type;
         this.total = total;
         this.year = year;
     }
@@ -31,13 +30,6 @@ public class count {
         this.id = id;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
 
     public int getTotal() {
         return total;
