@@ -1,10 +1,7 @@
 package com.example.demo.DataClass;
 
 
-import com.example.demo.RepoClass.cheackeditemsJpaRepo;
-import com.example.demo.RepoClass.inflowJpaRepo;
-import com.example.demo.RepoClass.countJpaRepo;
-import com.example.demo.RepoClass.necatJpaRepo;
+import com.example.demo.RepoClass.*;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +23,9 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/api")
 public class controller {
+
+    @Autowired
+    approverJpaRepo approverJpaRepo;
 
     @Autowired
     private HttpSession httpSession;
@@ -180,24 +180,52 @@ public class controller {
     }
 
     @PostMapping("/savedata")
-    @ResponseBody
     public String submitForm(@ModelAttribute("item") Item item) {
         System.out.println(item.getPersons().stream().count());
         List<checakedbrand> checkedItems = item.getPersons().stream().filter(checakedbrand::isIscheacked).collect(Collectors.toList());
         System.out.println(checkedItems.stream().count());
+        if(checkedItems!=null){
 
-        String newidGen=newIdGenrate();
+            String newidGen=newIdGenrate();
 
-        for (checakedbrand cb:
-             checkedItems) {
-            
-            cheackediteams ci= new cheackediteams(
-                     cb.getBrand(), cb.getCategory(), cb.getDate(),"pending",newidGen
-            );
-            cheackediteamsJpaRepo.save(ci);
+            for (checakedbrand cb:
+                    checkedItems) {
+
+                cheackediteams ci= new cheackediteams(
+                        cb.getBrand(), cb.getCategory(), cb.getDate(),"pending",newidGen
+                );
+                cheackediteamsJpaRepo.save(ci);
+            }
+            approverJpaRepo.save(new approverclass("pending","saradshukla",newidGen,"tre",checkedItems.size()));
         }
 
-        return checkedItems.get(0).getBrand();
+        return "redirect:/api/inflowdata";
+    }
+
+    @GetMapping(value = "/approvepage")
+    public ModelAndView approvepage(){
+        ModelAndView md= new ModelAndView("approvepage");
+        System.out.println(approverJpaRepo.findByFlag("pending").stream().count());
+        md.addObject("selected",approverJpaRepo.findByFlag("pending"));
+        md.addObject("finddata2",new approverclass());
+        return md;
+    }
+
+    @GetMapping(value = "/approveoutflow")
+    public ModelAndView approveDetalis(@RequestParam String outflowid){
+        ModelAndView md= new ModelAndView("approvedeails");
+        md.addObject("approvedeatils",cheackediteamsJpaRepo.findByNewid(outflowid));
+        md.addObject("submitvalue",new cheackediteams());
+        return md;
+    }
+
+
+    @PostMapping(value = "/approveoutflow")
+    public String approveoutflow(@RequestParam String approveid){
+        approverclass ap=approverJpaRepo.findByOutflowid(approveid).get(0);
+        ap.setFlag("approve");
+        approverJpaRepo.save(ap);
+        return "redirect:/api/approvepage";
     }
 
     @Transactional
@@ -221,6 +249,8 @@ public class controller {
         countJpaRepo.save(myTable);
         return "OF-"+currentYear.substring(2,4)+"-"+String.valueOf(oldCount);
     }
+
+
 
 
 //    @PostMapping("/savedata")

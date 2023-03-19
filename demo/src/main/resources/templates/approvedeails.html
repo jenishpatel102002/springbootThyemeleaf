@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>$Title$</title>
+</head>
+<body>
+<table>
+  <thead>
+  <tr>
+    <th>brand</th>
+    <th>category</th>
+    <th>date</th>
+    <th>newid</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="select:${approvedeatils}">
+    <th th:text="${select.brand}"></th>
+    <th th:text="${select.category}"></th>
+    <th th:text="${select.date}"></th>
+    <th th:text="${select.newid}"></th>
+  </tr>
+  <form th:method="post" th:action="@{/api/approveoutflow}">
+    <input type="hidden" th:value="${approvedeatils.get(0).newid}" name="approveid">
+    <button type="submit"  class="btn-dark btn"  >approve</button>
+  </form>
+  </tbody>
+</table>
+</body>
+</html>
